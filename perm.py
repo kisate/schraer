@@ -1,4 +1,4 @@
-from typing import Iterable, List
+from typing import Iterable, List, Dict
 
 class Cycle:
     def __init__(self, data : Iterable[int]):
@@ -43,7 +43,7 @@ class Cycle:
         return self.data.__eq__(value.data)
 
     def __hash__(self):
-        return self.data.__hash__()
+        return hash(str(self))
 
 class Permutation:
     def __init__(self, cycles : Iterable [Cycle]):
@@ -61,9 +61,27 @@ class Permutation:
         return self.cycles == value.cycles
 
     def __hash__(self):
-        return hash(self.cycles)
+        return hash(tuple(self.cycles))
 
 
 def to_perm(*cycles):
     return Permutation([Cycle(x) for x in cycles])
 
+def build_perm(data : Dict[int, int]):
+    n = max(data.keys())
+    cycles = []
+
+    been = set()
+
+    for i in range(1, n + 1):  
+        if i not in been and data[i] != i:
+            cycle = [i]
+            cur = data[i]
+            been.add(i)
+            while cur != i:
+                been.add(cur)
+                cycle.append(cur)
+                cur = data[cur]
+            cycles.append(Cycle(cycle))
+
+    return Permutation(cycles)

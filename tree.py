@@ -12,6 +12,7 @@ class Node:
     def __str__(self):
         
         return f"{self.val} {self.perm} [{' '.join([str(x) for x in self.children])}]"
+        
 
 class Tree:
     def __init__(self, root : Node, orbit, node_dict : Dict[int, Node], S : Iterable[Permutation]):
@@ -63,3 +64,28 @@ def build_tree(b, perms : Iterable [Permutation]):
                 next_elem = apply(p, [cur_elem])[0]
 
     return Tree(root, orbit, node_dict, perms)
+
+def build_tree_for_multi(b, perms : Iterable[Permutation]):
+    root = b
+    hash_orbit = set([hash(b)])
+    orbit = [b]
+
+
+    if (len(perms) == 0):
+        return orbit
+
+    q = [b]
+    cur_node = root
+
+    while (len(q) > 0):
+        cur_elem = q.pop(0)
+        for p in perms:
+            next_elem = apply(p, cur_elem)
+            while hash(tuple(next_elem)) not in hash_orbit:
+
+                q.append(next_elem)
+                orbit.append(tuple(next_elem))
+                hash_orbit.add(hash(tuple(next_elem)))
+                next_elem = apply(p, cur_elem)
+
+    return orbit
